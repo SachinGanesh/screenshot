@@ -49,7 +49,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   File _imageFile;
-  ScreenshotController screenshotController;
+
+  //Create an instance of ScreenshotController
+  ScreenshotController screenshotController = ScreenshotController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -59,13 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    screenshotController = new ScreenshotController();
   }
 
   @override
@@ -88,12 +90,16 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Screenshot(
-                controller: screenshotController,
-                child: Text(
-                  'You have pushed the button this many times:' +
-                      _counter.toString(),
-                ),
-              ),
+                  controller: screenshotController,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'You have pushed the button this many times:' +
+                            _counter.toString(),
+                      ),
+                      FlutterLogo(),
+                    ],
+                  )),
               _imageFile != null ? Image.file(_imageFile) : Container(),
             ],
           ),
@@ -103,15 +109,14 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           _incrementCounter();
           _imageFile = null;
-          screenshotController.capture().then((image) {
+          screenshotController.capture().then((File image) {
             //print("Capture Done");
             setState(() {
               _imageFile = image;
             });
-          }).catchError((onError){
+          }).catchError((onError) {
             print(onError);
           });
-          
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

@@ -10,9 +10,9 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 
 class ScreenshotController {
-  GlobalKey containerKey;
+  GlobalKey _containerKey;
   ScreenshotController() {
-    containerKey = GlobalKey();
+    _containerKey = GlobalKey();
   }
   Future<File> capture({
     String path = "",
@@ -20,7 +20,7 @@ class ScreenshotController {
   }) async {
     try {
       RenderRepaintBoundary boundary =
-          this.containerKey.currentContext.findRenderObject();
+          this._containerKey.currentContext.findRenderObject();
       ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
       ByteData byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
@@ -28,7 +28,6 @@ class ScreenshotController {
       if (path == "") {
         final directory = (await getApplicationDocumentsDirectory()).path;
         String fileName = DateTime.now().toIso8601String();
-        //print('Path: $fileName');
         path = '$directory/$fileName.png';
       }
       File imgFile = new File(path);
@@ -69,9 +68,9 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      widget.controller.containerKey = oldWidget.controller.containerKey;
+      widget.controller._containerKey = oldWidget.controller._containerKey;
       if (oldWidget.controller != null && widget.controller == null)
-        _controller.containerKey = oldWidget.controller.containerKey;
+        _controller._containerKey = oldWidget.controller._containerKey;
       if (widget.controller != null) {
         if (oldWidget.controller == null) {
           _controller = null;
@@ -83,7 +82,7 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      key: _controller.containerKey,
+      key: _controller._containerKey,
       child: widget.child,
     );
   }
