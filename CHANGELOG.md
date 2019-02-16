@@ -1,3 +1,6 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.2] - 16/02/2019
+* added support for older versions of path provider
 
-* TODO: Describe initial release.
+## [0.0.1] - 12/02/2019
+
+* initial release.
