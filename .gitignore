@@ -3,6 +3,8 @@
 
 .packages
 .pub/
+.idea/
+.vscode/
 
 build/
 ios/.generated/
