@@ -1,6 +1,6 @@
 name: screenshot
 description: Flutter Screenshot Package (Runtime). Capture any Widget as an image.
-version: 0.1.0
+version: 0.1.1
 author: Sachin Ganesh <sachinganesh@outlook.com>
 homepage: https://github.com/SachinGanesh/screenshot
 

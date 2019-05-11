@@ -14,28 +14,33 @@ class ScreenshotController {
   ScreenshotController() {
     _containerKey = GlobalKey();
   }
+
   Future<File> capture({
     String path = "",
     double pixelRatio: 1,
-  }) async {
-    try {
-      RenderRepaintBoundary boundary =
-          this._containerKey.currentContext.findRenderObject();
-      ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-      ByteData byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
-      if (path == "") {
-        final directory = (await getApplicationDocumentsDirectory()).path;
-        String fileName = DateTime.now().toIso8601String();
-        path = '$directory/$fileName.png';
+    Duration delay: const Duration(milliseconds: 20)
+  }) {
+    //DElay is required. See Issue https://github.com/flutter/flutter/issues/22308
+    return new Future.delayed(delay, () async {
+      try {
+        RenderRepaintBoundary boundary =
+            this._containerKey.currentContext.findRenderObject();
+        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+        ByteData byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
+        Uint8List pngBytes = byteData.buffer.asUint8List();
+        if (path == "") {
+          final directory = (await getApplicationDocumentsDirectory()).path;
+          String fileName = DateTime.now().toIso8601String();
+          path = '$directory/$fileName.png';
+        }
+        File imgFile = new File(path);
+        await imgFile.writeAsBytes(pngBytes).then((onValue) {});
+        return imgFile;
+      } catch (Exception) {
+        throw (Exception);
       }
-      File imgFile = new File(path);
-      await imgFile.writeAsBytes(pngBytes).then((onValue) {});
-      return imgFile;
-    } catch (Exception) {
-      throw (Exception);
-    }
+    });
   }
 }
 

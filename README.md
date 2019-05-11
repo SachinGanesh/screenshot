@@ -61,20 +61,21 @@ Example:
       ),
       body: Container(
         child: new Center(
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Screenshot( //Screenshot Widget
-                controller: screenshotController, //asign Controller
-                //wrap the widgets that you want to capture as image
-                child: <Widget>[ 
-                      Text(
-                        'You have pushed the button this many times:' +
-                            _counter.toString(),
-                      ),
-                      FlutterLogo(),
-                    ],
+              Screenshot(
+                controller: screenshotController,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'You have pushed the button this many times:' +
+                          _counter.toString(),
+                    ),
+                    FlutterLogo(),
+                  ],
                 ),
+              ),
               _imageFile != null ? Image.file(_imageFile) : Container(),
             ],
           ),
@@ -84,18 +85,23 @@ Example:
         onPressed: () {
           _incrementCounter();
           _imageFile = null;
-          screenshotController.capture().then((File image) {
+          screenshotController
+              .capture()
+              .then((File image) async {
+            //print("Capture Done");
             setState(() {
               _imageFile = image;
             });
-          }).catchError((onError){
+            final result =
+                await ImageGallerySaver.save(image.readAsBytesSync()); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+            print("File Saved to Gallery");
+          }).catchError((onError) {
             print(onError);
           });
-          
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 ```
@@ -113,6 +119,10 @@ screenshotController.capture(
     path:path //set path where screenshot will be saved
 );
 ```
+
+## Saving images to Gallery
+If you want to save captured image to Gallery, Please use https://github.com/hui-z/image_gallery_saver
+Example app uses the same to save screenshots to gallery.
 
 ## Note:
 Captured image may look pixelated. You can overcome this issue by setting value for **pixelRatio** 

@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 void main() => runApp(MyApp());
 
@@ -86,20 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: new Center(
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Screenshot(
-                  controller: screenshotController,
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'You have pushed the button this many times:' +
-                            _counter.toString(),
-                      ),
-                      FlutterLogo(),
-                    ],
-                  )),
+                controller: screenshotController,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'You have pushed the button this many times:' +
+                          _counter.toString(),
+                    ),
+                    FlutterLogo(),
+                  ],
+                ),
+              ),
               _imageFile != null ? Image.file(_imageFile) : Container(),
             ],
           ),
@@ -109,11 +112,16 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           _incrementCounter();
           _imageFile = null;
-          screenshotController.capture().then((File image) {
+          screenshotController
+              .capture(delay: Duration(milliseconds: 10))
+              .then((File image) async {
             //print("Capture Done");
             setState(() {
               _imageFile = image;
             });
+            final result =
+                await ImageGallerySaver.save(image.readAsBytesSync());
+            print("File Saved to Gallery");
           }).catchError((onError) {
             print(onError);
           });
@@ -122,5 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  _saved(File image) async {
+    final result = await ImageGallerySaver.save(image.readAsBytesSync());
+    print("File Saved to Gallery");
   }
 }
