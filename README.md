@@ -135,6 +135,19 @@ screenshotController.capture(
     pixelRatio: 1.5
 )
 ```
+---
+Sometimes rastergraphics like images and map may not be captured by the plugin with default configurations. The issue is discussed [here](https://api.flutter.dev/flutter/flutter_driver/FlutterDriver/screenshot.html). 
+
+```
+...screenshot is taken before the GPU thread is done rasterizing the frame 
+so the screenshot of the previous frame is taken, which is wrong.
+```
+
+The solution is to add a small delay before capturing. 
+
+```dart
+screenshotController.capture(delay: Duration(milliseconds: 10))
+```
 
 ## Known Bugs
 - Image will not be updated if same filename is given multiple times
