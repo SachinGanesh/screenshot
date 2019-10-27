@@ -136,7 +136,7 @@ screenshotController.capture(
 )
 ```
 ---
-Sometimes rastergraphics like images and map may not be captured by the plugin with default configurations. The issue is discussed [here](https://api.flutter.dev/flutter/flutter_driver/FlutterDriver/screenshot.html). 
+Sometimes rastergraphics like images may not be captured by the plugin with default configurations. The issue is discussed [here](https://api.flutter.dev/flutter/flutter_driver/FlutterDriver/screenshot.html). 
 
 ```
 ...screenshot is taken before the GPU thread is done rasterizing the frame 
