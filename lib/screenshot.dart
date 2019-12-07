@@ -42,7 +42,26 @@ class ScreenshotController {
       }
     });
   }
+  
+  
+  Future<ui.Image> captureAsUiImage({
+    double pixelRatio: 1,
+    Duration delay: const Duration(milliseconds: 20)
+  }) {
+    //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
+    return new Future.delayed(delay, () async {
+      try {
+        RenderRepaintBoundary boundary =
+        this._containerKey.currentContext.findRenderObject();
+        return await boundary.toImage(pixelRatio: pixelRatio);
+      } catch (Exception) {
+        throw (Exception);
+      }
+    });
+  }
+  
 }
+
 
 class Screenshot<T> extends StatefulWidget {
   final Widget child;
