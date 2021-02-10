@@ -15,7 +15,7 @@ This handy plugin can be used to capture any Widget including full screen screen
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  File _imageFile;
+  Uint8List _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController(); 
@@ -40,7 +40,7 @@ Screenshot(
 3) Take the screenshot by calling capture method. This will return a File
 
 ```dart
-screenshotController.capture().then((File image) {
+screenshotController.capture().then((Uint8List image) {
     //Capture Done
     setState(() {
         _imageFile = image;
@@ -76,7 +76,7 @@ Example:
                   ],
                 ),
               ),
-              _imageFile != null ? Image.file(_imageFile) : Container(),
+              _imageFile != null ? Image.memory(_imageFile) : Container(),
             ],
           ),
         ),
@@ -87,13 +87,13 @@ Example:
           _imageFile = null;
           screenshotController
               .capture()
-              .then((File image) async {
+              .then((Uint8List image) async {
             //print("Capture Done");
             setState(() {
               _imageFile = image;
             });
             final result =
-                await ImageGallerySaver.save(image.readAsBytesSync()); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+                await ImageGallerySaver.save(image); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
             print("File Saved to Gallery");
           }).catchError((onError) {
             print(onError);
