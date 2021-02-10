@@ -3,7 +3,7 @@ library screenshot;
 // import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
-
+import 'src/platform_specific/file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -21,8 +21,24 @@ class ScreenshotController {
     _containerKey = GlobalKey();
   }
 
+/// Captures image and saves to given path
+  Future<String> captureAndSave(
+    String directory, {
+    String fileName,
+    double pixelRatio,
+    Duration delay: const Duration(milliseconds: 20),
+  }) async {
+    Uint8List content = await capture(
+      pixelRatio: pixelRatio,
+      delay: delay,
+    );
+
+    PlatformFileManager fileManager = PlatformFileManager();
+
+    return fileManager.saveFile(content, directory, name: fileName);
+  }
+
   Future<Uint8List> capture({
-    String path = "",
     double pixelRatio,
     Duration delay: const Duration(milliseconds: 20),
   }) {
@@ -73,7 +89,7 @@ class Screenshot<T> extends StatefulWidget {
     this.child,
     this.controller,
   }) : super(key: key);
-      
+
   @override
   State<Screenshot> createState() {
     return new ScreenshotState();
@@ -116,4 +132,3 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
     );
   }
 }
-

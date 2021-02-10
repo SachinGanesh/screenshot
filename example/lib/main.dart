@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -58,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    
-    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView(); 
+    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     super.initState();
   }
 
@@ -92,8 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Center(
           child: Screenshot(
             controller: screenshotController,
-            child:Text("HEllo"),
-         
+            child: Text("HEllo"),
           ),
         ),
       ),
@@ -104,28 +101,21 @@ class _MyHomePageState extends State<MyHomePage> {
           screenshotController
               .capture(delay: Duration(milliseconds: 10))
               .then((Uint8List image) async {
-            //print("Capture Done");
-            // setState(() {
-              _imageFile = image;
-              showDialog(context: context,
+            _imageFile = image;
+            showDialog(
+              context: context,
               builder: (context) => Scaffold(
                 appBar: AppBar(
                   title: Text("CAPURED SCREENSHOT"),
                 ),
                 body: Center(
-                  child:Column(
-                    children: [
-
-                  _imageFile != null ? Image.memory(_imageFile) : Container(),
-                    ],
-                  ) 
-                ),
-              ) ,
-              );
-            // });
-            // final result =
-            //     await ImageGallerySaver.save(image.readAsBytesSync());
-            print("File Saved to Gallery");
+                    child: Column(
+                  children: [
+                    _imageFile != null ? Image.memory(_imageFile) : Container(),
+                  ],
+                )),
+              ),
+            );
           }).catchError((onError) {
             print(onError);
           });
