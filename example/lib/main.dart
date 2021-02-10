@@ -1,9 +1,9 @@
-import 'dart:io';
+// import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,14 +50,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  File _imageFile;
+  Uint8List _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -103,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              _imageFile != null ? Image.file(_imageFile) : Container(),
+              _imageFile != null ? Image.memory(_imageFile) : Container(),
             ],
           ),
         ),
@@ -114,13 +113,28 @@ class _MyHomePageState extends State<MyHomePage> {
           _imageFile = null;
           screenshotController
               .capture(delay: Duration(milliseconds: 10))
-              .then((File image) async {
+              .then((Uint8List image) async {
             //print("Capture Done");
-            setState(() {
+            // setState(() {
               _imageFile = image;
-            });
-            final result =
-                await ImageGallerySaver.save(image.readAsBytesSync());
+              showDialog(context: context,
+              builder: (context) => Scaffold(
+                appBar: AppBar(
+                  title: Text("CAPURED SCREENSHOT"),
+                ),
+                body: Center(
+                  child:Column(
+                    children: [
+
+                  _imageFile != null ? Image.memory(_imageFile) : Container(),
+                    ],
+                  ) 
+                ),
+              ) ,
+              );
+            // });
+            // final result =
+            //     await ImageGallerySaver.save(image.readAsBytesSync());
             print("File Saved to Gallery");
           }).catchError((onError) {
             print(onError);
@@ -132,8 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _saved(File image) async {
-    final result = await ImageGallerySaver.save(image.readAsBytesSync());
-    print("File Saved to Gallery");
-  }
+  // _saved(File image) async {
+  //   // final result = await ImageGallerySaver.save(image.readAsBytesSync());
+  //   print("File Saved to Gallery");
+  // }
 }

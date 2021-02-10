@@ -1,12 +1,13 @@
 library screenshot;
 
-import 'dart:io';
+// import 'dart:io';
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 
 class ScreenshotController {
@@ -15,28 +16,29 @@ class ScreenshotController {
     _containerKey = GlobalKey();
   }
 
-  Future<File> capture({
+  Future<Uint8List> capture({
     String path = "",
-    double pixelRatio: 1,
+    double pixelRatio,
     Duration delay: const Duration(milliseconds: 20)
   }) {
-    //DElay is required. See Issue https://github.com/flutter/flutter/issues/22308
+    //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
         RenderRepaintBoundary boundary =
-            this._containerKey.currentContext.findRenderObject();
+            this._containerKey.currentContext.findRenderObject() as RenderRepaintBoundary;
+      pixelRatio = pixelRatio??MediaQuery.of(_containerKey.currentContext).devicePixelRatio;
         ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
         ByteData byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData.buffer.asUint8List();
-        if (path == "") {
-          final directory = (await getApplicationDocumentsDirectory()).path;
-          String fileName = DateTime.now().toIso8601String();
-          path = '$directory/$fileName.png';
-        }
-        File imgFile = new File(path);
-        await imgFile.writeAsBytes(pngBytes).then((onValue) {});
-        return imgFile;
+        // if (path == "") {
+        //   final directory = (await getApplicationDocumentsDirectory()).path;
+        //   String fileName = DateTime.now().toIso8601String();
+        //   path = '$directory/$fileName.png';
+        // }
+        // File imgFile = new File(path);
+        // await imgFile.writeAsBytes(pngBytes).then((onValue) {});
+        return pngBytes;
       } catch (Exception) {
         throw (Exception);
       }
