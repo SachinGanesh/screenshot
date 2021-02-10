@@ -50,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  Uint8List? _imageFile;
+  // Uint8List? _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
@@ -90,18 +90,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Center(
           child: Screenshot(
             controller: screenshotController,
-            child: Text("HEllo"),
+            child: Text("You have pushed button $_counter times"),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _incrementCounter();
-          _imageFile = null;
+          // _imageFile = null;
           screenshotController
               .capture(delay: Duration(milliseconds: 10))
               .then((Uint8List? image) async {
-            _imageFile = image;
+            // _imageFile = image;
             if (image != null) {
               showDialog(
                 context: context,
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   body: Center(
                       child: Column(
                     children: [
-                      if (image != null) Image.memory(image),
+                     Image.memory(image),
                     ],
                   )),
                 ),
