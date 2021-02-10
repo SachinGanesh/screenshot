@@ -37,7 +37,7 @@ Screenshot(
 ),
 ```
 
-3) Take the screenshot by calling capture method. This will return a File
+3) Take the screenshot by calling capture method. This will return a Uint8List
 
 ```dart
 screenshotController.capture().then((Uint8List image) {
@@ -108,15 +108,22 @@ Example:
 
  <img src="assets/screenshot.png" alt="screenshot" width="400"/>
 
+## Saving images to Specific Location
+For this you can use captureAndSave method by passing directory location. By default, the captured image will be saved to Application Directory. Custom paths can be set using **path parameter**. Refer [path_provider](https://pub.dartlang.org/packages/path_provider)
 
-By defualt, the captured image will be saved to Application Directory. Custom paths can be set using **path parameter**. Refer [path_provider](https://pub.dartlang.org/packages/path_provider)
+### Note
+
+>Method captureAndSave is not supported for web. 
+
+
 ```dart
 final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-String fileName = DateTime.now().toIso8601String();
-path = '$directory/$fileName.png';
+String fileName = DateTime.now().microsecondsSinceEpoch;
+path = '$directory';
 
-screenshotController.capture(
-    path:path //set path where screenshot will be saved
+screenshotController.captureAndSave(
+    path //set path where screenshot will be saved
+    fileName:fileName 
 );
 ```
 
