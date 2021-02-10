@@ -16,42 +16,44 @@ import 'dart:ui' as ui;
 ///
 ///
 class ScreenshotController {
-  GlobalKey _containerKey;
+  late GlobalKey _containerKey;
   ScreenshotController() {
     _containerKey = GlobalKey();
   }
 
   /// Captures image and saves to given path
-  Future<String> captureAndSave(
+  Future<String?> captureAndSave(
     String directory, {
-    String fileName,
-    double pixelRatio,
-    Duration delay: const Duration(milliseconds: 20),
+    String? fileName,
+    double? pixelRatio,
+    Duration delay = const Duration(milliseconds: 20),
   }) async {
-    Uint8List content = await capture(
+    Uint8List? content = await capture(
       pixelRatio: pixelRatio,
       delay: delay,
     );
+    if (content != null) {
+      PlatformFileManager fileManager = PlatformFileManager();
 
-    PlatformFileManager fileManager = PlatformFileManager();
-
-    return fileManager.saveFile(content, directory, name: fileName);
+      return fileManager.saveFile(content, directory, name: fileName);
+    }
+    return null;
   }
 
-  Future<Uint8List> capture({
-    double pixelRatio,
-    Duration delay: const Duration(milliseconds: 20),
+  Future<Uint8List?> capture({
+    double? pixelRatio,
+    Duration? delay = const Duration(milliseconds: 20),
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
-    return new Future.delayed(delay, () async {
+    return new Future.delayed(delay ?? Duration(milliseconds: 20), () async {
       try {
         ui.Image image = await captureAsUiImage(
           delay: Duration.zero,
           pixelRatio: pixelRatio,
         );
-        ByteData byteData =
+        ByteData? byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
-        Uint8List pngBytes = byteData.buffer.asUint8List();
+        Uint8List? pngBytes = byteData?.buffer.asUint8List();
 
         return pngBytes;
       } catch (Exception) {
@@ -61,18 +63,20 @@ class ScreenshotController {
   }
 
   Future<ui.Image> captureAsUiImage(
-      {double pixelRatio: 1,
-      Duration delay: const Duration(milliseconds: 20)}) {
+      {double? pixelRatio, Duration delay: const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
         RenderRepaintBoundary boundary = this
             ._containerKey
             .currentContext
-            .findRenderObject() as RenderRepaintBoundary;
-        pixelRatio = pixelRatio ??
-            MediaQuery.of(_containerKey.currentContext).devicePixelRatio;
-        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+            ?.findRenderObject() as RenderRepaintBoundary;
+        BuildContext? context = _containerKey.currentContext;
+        if (pixelRatio == null) {
+          if (context != null)
+            pixelRatio = pixelRatio ?? MediaQuery.of(context).devicePixelRatio;
+        }
+        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio??1);
         return image;
       } catch (Exception) {
         throw (Exception);
@@ -85,9 +89,9 @@ class Screenshot<T> extends StatefulWidget {
   final Widget child;
   final ScreenshotController controller;
   const Screenshot({
-    Key key,
-    this.child,
-    this.controller,
+    Key? key,
+   required this.child,
+   required this.controller,
   }) : super(key: key);
 
   @override
@@ -97,14 +101,15 @@ class Screenshot<T> extends StatefulWidget {
 }
 
 class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
+  late
   ScreenshotController _controller;
 
   @override
   void initState() {
     super.initState();
-    if (widget.controller == null) {
-      _controller = ScreenshotController();
-    } else
+    // if (widget.controller == null) {
+    //   _controller = ScreenshotController();
+    // } else
       _controller = widget.controller;
   }
 
