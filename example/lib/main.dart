@@ -1,8 +1,9 @@
-// import 'dart:io';
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 void main() => runApp(MyApp());
@@ -57,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    
+    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView(); 
     super.initState();
   }
 
@@ -87,23 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: new Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Screenshot(
-                controller: screenshotController,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'You have pushed the button this many times:' +
-                          _counter.toString(),
-                    ),
-                    FlutterLogo(),
-                  ],
-                ),
-              ),
-              _imageFile != null ? Image.memory(_imageFile) : Container(),
-            ],
+          child: Screenshot(
+            controller: screenshotController,
+            child:Text("HEllo"),
+         
           ),
         ),
       ),
