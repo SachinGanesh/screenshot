@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,14 +50,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  File _imageFile;
+  Uint8List _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {
-    // TODO: implement initState
+    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     super.initState();
   }
 
@@ -88,23 +88,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: new Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Screenshot(
-                controller: screenshotController,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'You have pushed the button this many times:' +
-                          _counter.toString(),
-                    ),
-                    FlutterLogo(),
-                  ],
-                ),
-              ),
-              _imageFile != null ? Image.file(_imageFile) : Container(),
-            ],
+          child: Screenshot(
+            controller: screenshotController,
+            child: Text("HEllo"),
           ),
         ),
       ),
@@ -114,14 +100,22 @@ class _MyHomePageState extends State<MyHomePage> {
           _imageFile = null;
           screenshotController
               .capture(delay: Duration(milliseconds: 10))
-              .then((File image) async {
-            //print("Capture Done");
-            setState(() {
-              _imageFile = image;
-            });
-            final result =
-                await ImageGallerySaver.save(image.readAsBytesSync());
-            print("File Saved to Gallery");
+              .then((Uint8List image) async {
+            _imageFile = image;
+            showDialog(
+              context: context,
+              builder: (context) => Scaffold(
+                appBar: AppBar(
+                  title: Text("CAPURED SCREENSHOT"),
+                ),
+                body: Center(
+                    child: Column(
+                  children: [
+                    _imageFile != null ? Image.memory(_imageFile) : Container(),
+                  ],
+                )),
+              ),
+            );
           }).catchError((onError) {
             print(onError);
           });
@@ -132,8 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _saved(File image) async {
-    final result = await ImageGallerySaver.save(image.readAsBytesSync());
-    print("File Saved to Gallery");
-  }
+  // _saved(File image) async {
+  //   // final result = await ImageGallerySaver.save(image.readAsBytesSync());
+  //   print("File Saved to Gallery");
+  // }
 }

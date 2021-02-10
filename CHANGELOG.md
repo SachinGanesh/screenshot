@@ -1,3 +1,9 @@
+## [0.3.0] - 10/02/2021
+* breaking change capture method returns Uint8List instead of File.
+* support for web and windows
+* Add captureAndSave method.
+
+
 ## [0.2.0] - 10/06/2020
 * Add captureAsUiImage method
 

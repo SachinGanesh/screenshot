@@ -15,7 +15,7 @@ This handy plugin can be used to capture any Widget including full screen screen
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  File _imageFile;
+  Uint8List _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController(); 
@@ -37,10 +37,10 @@ Screenshot(
 ),
 ```
 
-3) Take the screenshot by calling capture method. This will return a File
+3) Take the screenshot by calling capture method. This will return a Uint8List
 
 ```dart
-screenshotController.capture().then((File image) {
+screenshotController.capture().then((Uint8List image) {
     //Capture Done
     setState(() {
         _imageFile = image;
@@ -76,7 +76,7 @@ Example:
                   ],
                 ),
               ),
-              _imageFile != null ? Image.file(_imageFile) : Container(),
+              _imageFile != null ? Image.memory(_imageFile) : Container(),
             ],
           ),
         ),
@@ -87,13 +87,13 @@ Example:
           _imageFile = null;
           screenshotController
               .capture()
-              .then((File image) async {
+              .then((Uint8List image) async {
             //print("Capture Done");
             setState(() {
               _imageFile = image;
             });
             final result =
-                await ImageGallerySaver.save(image.readAsBytesSync()); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+                await ImageGallerySaver.save(image); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
             print("File Saved to Gallery");
           }).catchError((onError) {
             print(onError);
@@ -108,15 +108,22 @@ Example:
 
  <img src="assets/screenshot.png" alt="screenshot" width="400"/>
 
+## Saving images to Specific Location
+For this you can use captureAndSave method by passing directory location. By default, the captured image will be saved to Application Directory. Custom paths can be set using **path parameter**. Refer [path_provider](https://pub.dartlang.org/packages/path_provider)
 
-By defualt, the captured image will be saved to Application Directory. Custom paths can be set using **path parameter**. Refer [path_provider](https://pub.dartlang.org/packages/path_provider)
+### Note
+
+>Method captureAndSave is not supported for web. 
+
+
 ```dart
 final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-String fileName = DateTime.now().toIso8601String();
-path = '$directory/$fileName.png';
+String fileName = DateTime.now().microsecondsSinceEpoch;
+path = '$directory';
 
-screenshotController.capture(
-    path:path //set path where screenshot will be saved
+screenshotController.captureAndSave(
+    path //set path where screenshot will be saved
+    fileName:fileName 
 );
 ```
 
