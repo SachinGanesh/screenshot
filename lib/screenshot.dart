@@ -21,7 +21,7 @@ class ScreenshotController {
     _containerKey = GlobalKey();
   }
 
-/// Captures image and saves to given path
+  /// Captures image and saves to given path
   Future<String> captureAndSave(
     String directory, {
     String fileName,
