@@ -16,7 +16,7 @@ import 'dart:ui' as ui;
 ///
 ///
 class ScreenshotController {
-  GlobalKey _containerKey;
+  GlobalKey? _containerKey;
   ScreenshotController() {
     _containerKey = GlobalKey();
   }
@@ -24,8 +24,8 @@ class ScreenshotController {
 /// Captures image and saves to given path
   Future<String> captureAndSave(
     String directory, {
-    String fileName,
-    double pixelRatio,
+    String? fileName,
+    double? pixelRatio,
     Duration delay: const Duration(milliseconds: 20),
   }) async {
     Uint8List content = await capture(
@@ -39,7 +39,7 @@ class ScreenshotController {
   }
 
   Future<Uint8List> capture({
-    double pixelRatio,
+    double? pixelRatio,
     Duration delay: const Duration(milliseconds: 20),
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
@@ -50,7 +50,7 @@ class ScreenshotController {
           pixelRatio: pixelRatio,
         );
         ByteData byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
+            await (image.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
         Uint8List pngBytes = byteData.buffer.asUint8List();
 
         return pngBytes;
@@ -61,18 +61,18 @@ class ScreenshotController {
   }
 
   Future<ui.Image> captureAsUiImage(
-      {double pixelRatio: 1,
+      {double? pixelRatio: 1,
       Duration delay: const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
         RenderRepaintBoundary boundary = this
-            ._containerKey
-            .currentContext
+            ._containerKey!
+            .currentContext!
             .findRenderObject() as RenderRepaintBoundary;
         pixelRatio = pixelRatio ??
-            MediaQuery.of(_containerKey.currentContext).devicePixelRatio;
-        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
+            MediaQuery.of(_containerKey!.currentContext!).devicePixelRatio;
+        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio!);
         return image;
       } catch (Exception) {
         throw (Exception);
@@ -82,10 +82,10 @@ class ScreenshotController {
 }
 
 class Screenshot<T> extends StatefulWidget {
-  final Widget child;
-  final ScreenshotController controller;
+  final Widget? child;
+  final ScreenshotController? controller;
   const Screenshot({
-    Key key,
+    Key? key,
     this.child,
     this.controller,
   }) : super(key: key);
@@ -97,7 +97,7 @@ class Screenshot<T> extends StatefulWidget {
 }
 
 class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
-  ScreenshotController _controller;
+  ScreenshotController? _controller;
 
   @override
   void initState() {
@@ -127,7 +127,7 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      key: _controller._containerKey,
+      key: _controller!._containerKey,
       child: widget.child,
     );
   }
