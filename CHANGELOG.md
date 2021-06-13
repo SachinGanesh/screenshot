@@ -1,4 +1,4 @@
-## [1.1.0] - 13/06/2021
+## [1.2.0] - 13/06/2021
 * Add support for invisible widget capture
 
 ## [1.0.0-nullsafety.0] - 10/02/2021
