@@ -32,17 +32,14 @@ class ScreenshotController {
       pixelRatio: pixelRatio,
       delay: delay,
     );
-    if (content != null) {
-      PlatformFileManager fileManager = PlatformFileManager();
+    PlatformFileManager fileManager = PlatformFileManager();
 
-      return fileManager.saveFile(content, directory, name: fileName);
-    }
-    return null;
+    return fileManager.saveFile(content!, directory, name: fileName);
   }
 
-  Future<Uint8List> capture({
+  Future<Uint8List?> capture({
     double? pixelRatio,
-    Duration delay: const Duration(milliseconds: 20),
+    Duration delay = const Duration(milliseconds: 20),
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay ?? Duration(milliseconds: 20), () async {
@@ -141,7 +138,7 @@ class ScreenshotController {
 
 class Screenshot<T> extends StatefulWidget {
   final Widget? child;
-  final ScreenshotController? controller;
+  final ScreenshotController controller;
   const Screenshot({
     Key? key,
     required this.child,
@@ -160,32 +157,13 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // if (widget.controller == null) {
-    //   _controller = ScreenshotController();
-    // } else
     _controller = widget.controller;
   }
-
-  // @override
-  // void didUpdateWidget(Screenshot oldWidget) {
-  //   // super.didUpdateWidget(oldWidget);
-
-  //   // if (widget.controller != oldWidget.controller) {
-  //   //   widget.controller._containerKey = oldWidget.controller._containerKey;
-  //   //   if (oldWidget.controller != null && widget.controller == null)
-  //   //     _controller._containerKey = oldWidget.controller._containerKey;
-  //   //   if (widget.controller != null) {
-  //   //     if (oldWidget.controller == null) {
-  //   //       _controller = null;
-  //   //     }
-  //   //   }
-  //   // }
-  // }
 
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      key: _controller!._containerKey,
+      key: _controller._containerKey,
       child: widget.child,
     );
   }

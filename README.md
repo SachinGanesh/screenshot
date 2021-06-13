@@ -6,7 +6,20 @@ This package wraps your widgets inside [RenderRepaintBoundary](https://docs.flut
 
 [Source](https://stackoverflow.com/a/51118088)
 
- <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/screenshot.gif" alt="screenshot" width="200"/>
+---
+<br>
+<div style="display: flex;">
+    <div style="flex: 40%; padding: 5px;">
+         <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/screenshot.gif" alt="screenshot"/>
+    </div>
+    <div style="flex: 60%; padding: 5px;">
+        <p>&nbsp; Capture a widget part of the widget tree:</p>
+        <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/code1.png" alt="screenshot"/>
+        <hr>
+        <p>&nbsp;Capture an invisible widget (a widget which is not part of the widget tree):</p>
+        <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/code2.png" alt="screenshot"/>
+    </div>
+</div>
 
 ---
 ## Getting Started
@@ -181,7 +194,7 @@ The solution is to add a small delay before capturing.
 ```dart
 screenshotController.capture(delay: Duration(milliseconds: 10))
 ```
-
+---
 ## Known Issues
 - Platform Views are not supported. (Example: Google Maps, Camera etc)
-
+---
