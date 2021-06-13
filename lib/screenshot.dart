@@ -21,7 +21,7 @@ class ScreenshotController {
     _containerKey = GlobalKey();
   }
 
-/// Captures image and saves to given path
+  /// Captures image and saves to given path
   Future<String> captureAndSave(
     String directory, {
     String? fileName,
@@ -49,8 +49,8 @@ class ScreenshotController {
           delay: Duration.zero,
           pixelRatio: pixelRatio,
         );
-        ByteData byteData =
-            await (image.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
+        ByteData byteData = await (image.toByteData(
+            format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
         Uint8List pngBytes = byteData.buffer.asUint8List();
 
         return pngBytes;
@@ -78,6 +78,59 @@ class ScreenshotController {
         throw (Exception);
       }
     });
+  }
+
+  Future<Uint8List> captureFromWidget(Widget widget,
+      {Duration delay: const Duration(milliseconds: 20)}) async {
+    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
+
+    Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
+    Size imageSize = ui.window.physicalSize;
+
+    assert(logicalSize.aspectRatio == imageSize.aspectRatio);
+
+    final RenderView renderView = RenderView(
+      window: ui.window,
+      child: RenderPositionedBox(
+          alignment: Alignment.center, child: repaintBoundary),
+      configuration: ViewConfiguration(
+        size: logicalSize,
+        devicePixelRatio: 1.0,
+      ),
+    );
+
+    final PipelineOwner pipelineOwner = PipelineOwner();
+    final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+
+    pipelineOwner.rootNode = renderView;
+    renderView.prepareInitialFrame();
+
+    final RenderObjectToWidgetElement<RenderBox> rootElement =
+        RenderObjectToWidgetAdapter<RenderBox>(
+      container: repaintBoundary,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: widget,
+      ),
+    ).attachToRenderTree(buildOwner);
+
+    buildOwner.buildScope(rootElement);
+
+    await Future.delayed(delay);
+
+    buildOwner.buildScope(rootElement);
+    buildOwner.finalizeTree();
+
+    pipelineOwner.flushLayout();
+    pipelineOwner.flushCompositingBits();
+    pipelineOwner.flushPaint();
+
+    final ui.Image image = await repaintBoundary.toImage(
+        pixelRatio: imageSize.width / logicalSize.width);
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
+
+    return byteData!.buffer.asUint8List();
   }
 }
 

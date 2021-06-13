@@ -8,6 +8,7 @@ description: A new Flutter project.
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
 version: 1.0.0+1
+publish_to: none
 
 environment:
   sdk: '>=2.8.0 <3.0.0'
@@ -19,7 +20,7 @@ dependencies:
   screenshot:
     path: ../
   cupertino_icons: ^0.1.2
-  image_gallery_saver: ^1.1.0
+  # image_gallery_saver: ^1.1.0
 
 dev_dependencies:
   flutter_test:

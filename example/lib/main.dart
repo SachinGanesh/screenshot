@@ -32,16 +32,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -49,9 +39,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  Uint8List _imageFile;
-
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -59,17 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     super.initState();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
   }
 
   @override
@@ -86,43 +62,76 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Container(
-        child: new Center(
-          child: Screenshot(
-            controller: screenshotController,
-            child: Text("HEllo"),
-          ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Screenshot(
+              controller: screenshotController,
+              child: Container(
+                  padding: const EdgeInsets.all(30.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueAccent, width: 5.0),
+                    color: Colors.amberAccent,
+                  ),
+                  child: Text("This widget will be captured as an image")),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            ElevatedButton(
+              child: Text(
+                'Capture Above Widget',
+              ),
+              onPressed: () {
+                screenshotController
+                    .capture(delay: Duration(milliseconds: 10))
+                    .then((Uint8List capturedImage) async {
+                  ShowCapturedWidget(context, capturedImage);
+                }).catchError((onError) {
+                  print(onError);
+                });
+              },
+            ),
+            ElevatedButton(
+              child: Text(
+                'Capture An Invisible Widget',
+              ),
+              onPressed: () {
+                screenshotController
+                    .captureFromWidget(Container(
+                        padding: const EdgeInsets.all(30.0),
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.blueAccent, width: 5.0),
+                          color: Colors.redAccent,
+                        ),
+                        child: Text("This is an invisible widget")))
+                    .then((capturedImage) {
+                  ShowCapturedWidget(context, capturedImage);
+                });
+              },
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _incrementCounter();
-          _imageFile = null;
-          screenshotController
-              .capture(delay: Duration(milliseconds: 10))
-              .then((Uint8List image) async {
-            _imageFile = image;
-            showDialog(
-              context: context,
-              builder: (context) => Scaffold(
-                appBar: AppBar(
-                  title: Text("CAPURED SCREENSHOT"),
-                ),
-                body: Center(
-                    child: Column(
-                  children: [
-                    _imageFile != null ? Image.memory(_imageFile) : Container(),
-                  ],
-                )),
-              ),
-            );
-          }).catchError((onError) {
-            print(onError);
-          });
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Future<dynamic> ShowCapturedWidget(
+      BuildContext context, Uint8List capturedImage) {
+    return showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => Scaffold(
+        appBar: AppBar(
+          title: Text("Captured widget screenshot"),
+        ),
+        body: Center(
+            child: capturedImage != null
+                ? Image.memory(capturedImage)
+                : Container()),
+      ),
     );
   }
 

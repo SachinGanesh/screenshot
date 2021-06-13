@@ -1,14 +1,17 @@
-# screenshot
+ <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/sc.png" alt="screenshot"/>
 
-A simple plugin to capture widgets as Images.
+A simple package to capture widgets as Images. Now you can capture widgets that are not rendered on the screen!
 
-This plugin wraps your widgets inside [RenderRepaintBoundary](https://docs.flutter.io/flutter/rendering/RenderRepaintBoundary-class.html)
+This package wraps your widgets inside [RenderRepaintBoundary](https://docs.flutter.io/flutter/rendering/RenderRepaintBoundary-class.html)
 
 [Source](https://stackoverflow.com/a/51118088)
 
+ <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/screenshot.gif" alt="screenshot" width="200"/>
+
+---
 ## Getting Started
 
-This handy plugin can be used to capture any Widget including full screen screenshots & individual widgets like Text().
+This handy package can be used to capture any Widget including full screen screenshots & individual widgets like Text().
 
 1) Create Instance of Screenshot Controller
 
@@ -49,7 +52,27 @@ screenshotController.capture().then((Uint8List image) {
     print(onError);
 });
 ```
+---
+## Capturing Widgets that are not in the widget tree
 
+You can capture invisible widgets by pr
+
+```dart
+screenshotController
+      .captureFromWidget(Container(
+          padding: const EdgeInsets.all(30.0),
+          decoration: BoxDecoration(
+            border:
+                Border.all(color: Colors.blueAccent, width: 5.0),
+            color: Colors.redAccent,
+          ),
+          child: Text("This is an invisible widget")))
+      .then((capturedImage) {
+    // Handle captured image
+  });
+},
+```
+---
 Example:
 
 ```dart
@@ -106,8 +129,9 @@ Example:
   }
 ```
 
- <img src="assets/screenshot.png" alt="screenshot" width="400"/>
+ <img src="https://github.com/SachinGanesh/screenshot/raw/master/assets/screenshot.png" alt="screenshot" width="400"/>
 
+---
 ## Saving images to Specific Location
 For this you can use captureAndSave method by passing directory location. By default, the captured image will be saved to Application Directory. Custom paths can be set using **path parameter**. Refer [path_provider](https://pub.dartlang.org/packages/path_provider)
 
@@ -126,20 +150,22 @@ screenshotController.captureAndSave(
     fileName:fileName 
 );
 ```
-
+---
 ## Saving images to Gallery
 If you want to save captured image to Gallery, Please use https://github.com/hui-z/image_gallery_saver
 Example app uses the same to save screenshots to gallery.
 
-## Note:
+### Note:
 Captured image may look pixelated. You can overcome this issue by setting value for **pixelRatio** 
 
 >The pixelRatio describes the scale between the logical pixels and the size of the output image. It is independent of the window.devicePixelRatio for the device, so specifying 1.0 (the default) will give you a 1:1 mapping between logical pixels and the output pixels in the image.
 
 
 ```dart
+double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+
 screenshotController.capture(
-    pixelRatio: 1.5
+    pixelRatio: pixelRatio
 )
 ```
 ---
@@ -156,6 +182,6 @@ The solution is to add a small delay before capturing.
 screenshotController.capture(delay: Duration(milliseconds: 10))
 ```
 
-## Known Bugs
-- Image will not be updated if same filename is given multiple times
+## Known Issues
+- Platform Views are not supported. (Example: Google Maps, Camera etc)
 
