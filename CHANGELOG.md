@@ -1,3 +1,6 @@
+## [1.0.0-nullsafety.0] - 10/02/2021
+* Add nullsafety
+
 ## [0.3.0] - 10/02/2021
 * breaking change capture method returns Uint8List instead of File.
 * support for web and windows
