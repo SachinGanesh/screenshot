@@ -42,7 +42,7 @@ class ScreenshotController {
     Duration delay = const Duration(milliseconds: 20),
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
-    return new Future.delayed(delay ?? Duration(milliseconds: 20), () async {
+    return new Future.delayed(delay, () async {
       try {
         ui.Image image = await captureAsUiImage(
           delay: Duration.zero,
