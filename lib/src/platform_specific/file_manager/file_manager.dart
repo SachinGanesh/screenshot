@@ -7,5 +7,5 @@ import 'file_manager_stub.dart'
 
 abstract class PlatformFileManager {
   factory PlatformFileManager() => getFileManager();
-  Future<String> saveFile(Uint8List fileContent, String path, {String name});
+  Future<String> saveFile(Uint8List fileContent, String path, {String? name});
 }
