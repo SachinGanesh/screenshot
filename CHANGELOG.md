@@ -1,3 +1,6 @@
+## [1.2.1] - 13/06/2021
+* Removal of compilation warning @yanivshaked
+
 ## [1.2.0] - 13/06/2021
 * Add support for invisible widget capture
 
