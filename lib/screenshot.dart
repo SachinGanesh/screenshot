@@ -44,12 +44,12 @@ class ScreenshotController {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
-        ui.Image image = await captureAsUiImage(
+        ui.Image? image = await captureAsUiImage(
           delay: Duration.zero,
           pixelRatio: pixelRatio,
         );
         ByteData? byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
+            await image?.toByteData(format: ui.ImageByteFormat.png);
         Uint8List? pngBytes = byteData?.buffer.asUint8List();
 
         return pngBytes;
@@ -59,16 +59,20 @@ class ScreenshotController {
     });
   }
 
-  Future<ui.Image> captureAsUiImage(
+  Future<ui.Image?> captureAsUiImage(
       {double? pixelRatio: 1,
       Duration delay: const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
-        RenderRepaintBoundary boundary = this
+        var findRenderObject = this
             ._containerKey
             .currentContext
-            ?.findRenderObject() as RenderRepaintBoundary;
+            ?.findRenderObject();
+            if(findRenderObject==null){
+                return null;
+            }
+        RenderRepaintBoundary boundary = findRenderObject as RenderRepaintBoundary;
         BuildContext? context = _containerKey.currentContext;
         if (pixelRatio == null) {
           if (context != null)
@@ -89,7 +93,7 @@ class ScreenshotController {
     Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
     Size imageSize = ui.window.physicalSize;
 
-    assert(logicalSize.aspectRatio == imageSize.aspectRatio);
+    assert(logicalSize.aspectRatio.toPrecision(5) == imageSize.aspectRatio.toPrecision(5));
 
     final RenderView renderView = RenderView(
       window: ui.window,
@@ -167,4 +171,9 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
       child: widget.child,
     );
   }
+}
+
+
+extension Ex on double {
+  double toPrecision(int n) => double.parse(toStringAsFixed(n));
 }
