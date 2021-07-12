@@ -87,7 +87,7 @@ class ScreenshotController {
   }
 
   Future<Uint8List> captureFromWidget(Widget widget,
-      {Duration delay: const Duration(milliseconds: 20)}) async {
+      {Duration delay: const Duration(milliseconds: 20), double? pixelRatio,}) async {
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
     Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
@@ -132,7 +132,7 @@ class ScreenshotController {
     pipelineOwner.flushPaint();
 
     final ui.Image image = await repaintBoundary.toImage(
-        pixelRatio: imageSize.width / logicalSize.width);
+        pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
 
