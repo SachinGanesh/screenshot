@@ -1,3 +1,6 @@
+## [1.2.2] - 14/07/2021
+* Add pixelRatio to captureFromWidget @hashirshoaeb
+* Fix assertion issue
 ## [1.2.1] - 13/06/2021
 * Removal of compilation warning @yanivshaked
 
