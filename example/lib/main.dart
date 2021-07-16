@@ -14,6 +14,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        textTheme: TextTheme(
+            headline6: TextStyle(
+          color: Colors.yellow,
+          fontSize: 50,
+        )),
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
@@ -98,15 +103,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 'Capture An Invisible Widget',
               ),
               onPressed: () {
+                var container = Container(
+                    padding: const EdgeInsets.all(30.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blueAccent, width: 5.0),
+                      color: Colors.redAccent,
+                    ),
+                    child: Text(
+                      "This is an invisible widget",
+                      style: Theme.of(context).textTheme.headline6,
+                    ));
                 screenshotController
-                    .captureFromWidget(Container(
-                        padding: const EdgeInsets.all(30.0),
-                        decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Colors.blueAccent, width: 5.0),
-                          color: Colors.redAccent,
-                        ),
-                        child: Text("This is an invisible widget")))
+                    .captureFromWidget(
+                        InheritedTheme.captureAll(
+                            context, Material(child: container)),
+                        delay: Duration(seconds: 1))
                     .then((capturedImage) {
                   ShowCapturedWidget(context, capturedImage);
                 });

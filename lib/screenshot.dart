@@ -2,6 +2,7 @@ library screenshot;
 
 // import 'dart:io';
 import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 import 'src/platform_specific/file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
@@ -65,14 +66,13 @@ class ScreenshotController {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
-        var findRenderObject = this
-            ._containerKey
-            .currentContext
-            ?.findRenderObject();
-            if(findRenderObject==null){
-                return null;
-            }
-        RenderRepaintBoundary boundary = findRenderObject as RenderRepaintBoundary;
+        var findRenderObject =
+            this._containerKey.currentContext?.findRenderObject();
+        if (findRenderObject == null) {
+          return null;
+        }
+        RenderRepaintBoundary boundary =
+            findRenderObject as RenderRepaintBoundary;
         BuildContext? context = _containerKey.currentContext;
         if (pixelRatio == null) {
           if (context != null)
@@ -86,14 +86,45 @@ class ScreenshotController {
     });
   }
 
-  Future<Uint8List> captureFromWidget(Widget widget,
-      {Duration delay: const Duration(milliseconds: 20), double? pixelRatio,}) async {
+  ///
+  /// Value for [delay] should increase with widget tree size. Prefered value is 1 seconds
+  ///
+  ///[context] parameter is used to Inherit App Theme and MediaQuery data.
+  ///
+  ///
+  ///
+  Future<Uint8List> captureFromWidget(
+    Widget widget, {
+    Duration delay: const Duration(seconds: 1),
+    double? pixelRatio,
+    BuildContext? context,
+  }) async {
+    ///
+    ///Retry counter
+    ///
+    int retryCounter = 3;
+    bool isDirty = false;
+
+    Widget child = widget;
+
+    if (context != null) {
+      ///
+      ///Inherit Theme and MediaQuery of app
+      ///
+      ///
+      child = InheritedTheme.captureAll(
+        context,
+        MediaQuery(data: MediaQuery.of(context), child: child),
+      );
+    }
+
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
     Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
     Size imageSize = ui.window.physicalSize;
 
-    assert(logicalSize.aspectRatio.toPrecision(5) == imageSize.aspectRatio.toPrecision(5));
+    assert(logicalSize.aspectRatio.toPrecision(5) ==
+        imageSize.aspectRatio.toPrecision(5));
 
     final RenderView renderView = RenderView(
       window: ui.window,
@@ -101,38 +132,87 @@ class ScreenshotController {
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
         size: logicalSize,
-        devicePixelRatio: 1.0,
+        devicePixelRatio: pixelRatio ?? 1.0,
       ),
     );
 
     final PipelineOwner pipelineOwner = PipelineOwner();
-    final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+    final BuildOwner buildOwner = BuildOwner(
+        focusManager: FocusManager(),
+        onBuildScheduled: () {
+          ///
+          ///current render is dirty, mark it.
+          ///
+          isDirty = true;
+        });
 
     pipelineOwner.rootNode = renderView;
     renderView.prepareInitialFrame();
 
     final RenderObjectToWidgetElement<RenderBox> rootElement =
         RenderObjectToWidgetAdapter<RenderBox>(
-      container: repaintBoundary,
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: widget,
-      ),
-    ).attachToRenderTree(buildOwner);
+            container: repaintBoundary,
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: child,
+            )).attachToRenderTree(
+      buildOwner,
+    );
+    ////
+    ///Render Widget
+    ///
+    ///
 
-    buildOwner.buildScope(rootElement);
-
-    await Future.delayed(delay);
-
-    buildOwner.buildScope(rootElement);
+    buildOwner.buildScope(rootElement,);
     buildOwner.finalizeTree();
 
     pipelineOwner.flushLayout();
     pipelineOwner.flushCompositingBits();
     pipelineOwner.flushPaint();
 
-    final ui.Image image = await repaintBoundary.toImage(
-        pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
+    ui.Image? image;
+
+    do {
+      ///
+      ///Reset the dirty flag
+      ///
+      ///
+      isDirty = false;
+
+      image = await repaintBoundary.toImage(
+          pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
+
+      ///
+      ///This delay shoud inceases with Widget tree Size
+      ///
+
+      await Future.delayed(delay);
+
+      ///
+      ///Check does this require rebuild
+      ///
+      ///
+      if (isDirty) {
+        ///
+        ///Previous capture has been updated, re-render again.
+        ///
+        ///
+        buildOwner.buildScope(
+          rootElement,
+        );
+        buildOwner.finalizeTree();
+        pipelineOwner.flushLayout();
+        pipelineOwner.flushCompositingBits();
+        pipelineOwner.flushPaint();
+      }
+      retryCounter--;
+
+      ///
+      ///retry untill capture is successfull
+      ///
+
+    } while (isDirty && retryCounter >= 0);
+
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
 
@@ -172,7 +252,6 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
     );
   }
 }
-
 
 extension Ex on double {
   double toPrecision(int n) => double.parse(toStringAsFixed(n));
