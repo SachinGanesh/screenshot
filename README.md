@@ -100,7 +100,25 @@ screenshotController.captureAndSave(
 If you want to save captured image to Gallery, Please use https://github.com/hui-z/image_gallery_saver
 Example app uses the same to save screenshots to gallery.
 
-### Note:
+---
+
+##Sharing Captured Images 
+
+```dart
+await _screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List image) async {
+      if (image != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = await File('${directory.path}/image.png').create();
+        await imagePath.writeAsBytes(image);
+
+        /// Share Plugin
+        await Share.shareFiles([imagePath.path]);
+      }
+    });
+```
+
+---
+## Note:
 Captured image may look pixelated. You can overcome this issue by setting value for **pixelRatio** 
 
 >The pixelRatio describes the scale between the logical pixels and the size of the output image. It is independent of the window.devicePixelRatio for the device, so specifying 1.0 (the default) will give you a 1:1 mapping between logical pixels and the output pixels in the image.
@@ -128,5 +146,5 @@ screenshotController.capture(delay: Duration(milliseconds: 10))
 ```
 ---
 ## Known Issues
-- **`Platform Views are not supported. (Example: Google Maps, Camera etc)`**
+- **`Platform Views are not supported. (Example: Google Maps, Camera etc)`[issue](https://github.com/flutter/flutter/issues/83856)**
 ---
