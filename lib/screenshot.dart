@@ -2,14 +2,15 @@ library screenshot;
 
 // import 'dart:io';
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
-import 'src/platform_specific/file_manager/file_manager.dart';
+// import 'package:path_provider/path_provider.dart';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-// import 'package:path_provider/path_provider.dart';
-import 'dart:ui' as ui;
+
+import 'src/platform_specific/file_manager/file_manager.dart';
 
 ///
 ///
@@ -93,12 +94,11 @@ class ScreenshotController {
   ///
   ///
   ///
-  Future<Uint8List> captureFromWidget(
-    Widget widget, {
-    Duration delay: const Duration(seconds: 1),
-    double? pixelRatio,
-    BuildContext? context,
-  }) async {
+  Future<Uint8List> captureFromWidget(Widget widget,
+      {Duration delay: const Duration(seconds: 1),
+      double? pixelRatio,
+      BuildContext? context,
+      Size? customSize}) async {
     ///
     ///Retry counter
     ///
@@ -119,9 +119,9 @@ class ScreenshotController {
     }
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-    Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
-    Size imageSize = ui.window.physicalSize;
+    final Size rootSize = customSize ?? ui.window.physicalSize;
+    Size logicalSize = rootSize / ui.window.devicePixelRatio;
+    Size imageSize = rootSize;
 
     assert(logicalSize.aspectRatio.toPrecision(5) ==
         imageSize.aspectRatio.toPrecision(5));
@@ -163,7 +163,9 @@ class ScreenshotController {
     ///
     ///
 
-    buildOwner.buildScope(rootElement,);
+    buildOwner.buildScope(
+      rootElement,
+    );
     buildOwner.finalizeTree();
 
     pipelineOwner.flushLayout();
