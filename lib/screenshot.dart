@@ -2,14 +2,15 @@ library screenshot;
 
 // import 'dart:io';
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
-import 'src/platform_specific/file_manager/file_manager.dart';
+// import 'package:path_provider/path_provider.dart';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-// import 'package:path_provider/path_provider.dart';
-import 'dart:ui' as ui;
+
+import 'src/platform_specific/file_manager/file_manager.dart';
 
 ///
 ///
@@ -98,6 +99,27 @@ class ScreenshotController {
     Duration delay: const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
+    Size? targetSize,
+
+  }) async {
+     ui.Image image = await widgetToUiImage(widget,
+        delay: delay,
+        pixelRatio: pixelRatio,
+        context: context,
+        targetSize: targetSize);
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
+
+    return byteData!.buffer.asUint8List();
+  }
+
+ 
+  static Future<ui.Image> widgetToUiImage(
+    Widget widget, {
+    Duration delay: const Duration(seconds: 1),
+    double? pixelRatio,
+    BuildContext? context,
+    Size? targetSize, 
   }) async {
     ///
     ///Retry counter
@@ -114,17 +136,18 @@ class ScreenshotController {
       ///
       child = InheritedTheme.captureAll(
         context,
-        MediaQuery(data: MediaQuery.of(context), child: child),
+        MediaQuery(data: MediaQuery.of(context), child: Material(child:child,color: Colors.transparent, )),
       );
     }
 
-    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
+    final RenderRepaintBoundary repaintBoundary =  RenderRepaintBoundary();
 
-    Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;
-    Size imageSize = ui.window.physicalSize;
+    Size logicalSize = targetSize ??
+        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
+    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
 
-    assert(logicalSize.aspectRatio.toPrecision(5) ==
-        imageSize.aspectRatio.toPrecision(5));
+    assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
+        imageSize.aspectRatio.toStringAsPrecision(5));    // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
       window: ui.window,
@@ -163,7 +186,9 @@ class ScreenshotController {
     ///
     ///
 
-    buildOwner.buildScope(rootElement,);
+    buildOwner.buildScope(
+      rootElement,
+    );
     buildOwner.finalizeTree();
 
     pipelineOwner.flushLayout();
@@ -183,7 +208,7 @@ class ScreenshotController {
           pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
 
       ///
-      ///This delay shoud inceases with Widget tree Size
+      ///This delay sholud increas with Widget tree Size
       ///
 
       await Future.delayed(delay);
@@ -213,10 +238,8 @@ class ScreenshotController {
 
     } while (isDirty && retryCounter >= 0);
 
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
 
-    return byteData!.buffer.asUint8List();
+    return image;   // Adapted to directly return the image and not the Uint8List
   }
 }
 
