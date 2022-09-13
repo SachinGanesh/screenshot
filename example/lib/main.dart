@@ -152,10 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("Captured widget screenshot"),
         ),
-        body: Center(
-            child: capturedImage != null
-                ? Image.memory(capturedImage)
-                : Container()),
+        body: Center(child: Image.memory(capturedImage)),
       ),
     );
   }
