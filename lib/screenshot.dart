@@ -3,13 +3,11 @@ library screenshot;
 // import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
-
 // import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 import 'src/platform_specific/file_manager/file_manager.dart';
 
@@ -246,6 +244,15 @@ class ScreenshotController {
       ///
 
     } while (isDirty && retryCounter >= 0);
+    try {
+
+      /// Dispose All widgets 
+      rootElement.visitChildren((Element element) {
+        rootElement.deactivateChild(element);
+      });
+      buildOwner.finalizeTree();
+    } catch (e) {}
+
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
