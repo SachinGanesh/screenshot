@@ -8,7 +8,10 @@
             "name": "Flutter",
             "request": "launch",
             "type": "dart",
-            "program": "example/lib/main.dart"
+            "program": "example/lib/main.dart",
+            "args": [
+                "--web-renderer canvaskit --dart-define=BROWSER_IMAGE_DECODING_ENABLED=false --release"
+            ]
         }
     ]
 }
