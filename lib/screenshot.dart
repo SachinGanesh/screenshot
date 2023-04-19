@@ -63,9 +63,10 @@ class ScreenshotController {
     });
   }
 
-  Future<ui.Image?> captureAsUiImage(
-      {double? pixelRatio: 1,
-      Duration delay: const Duration(milliseconds: 20)}) {
+  Future<ui.Image?> captureAsUiImage({
+    double? pixelRatio = 1,
+    Duration delay = const Duration(milliseconds: 20),
+  }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
@@ -98,7 +99,7 @@ class ScreenshotController {
   ///
   Future<Uint8List> captureFromWidget(
     Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
@@ -117,7 +118,7 @@ class ScreenshotController {
 
   static Future<ui.Image> widgetToUiImage(
     Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
@@ -130,6 +131,8 @@ class ScreenshotController {
 
     Widget child = widget;
 
+    // ignore: deprecated_member_use
+    ui.FlutterView window = ui.window;
     if (context != null) {
       ///
       ///Inherit Theme and MediaQuery of app
@@ -144,20 +147,21 @@ class ScreenshotController {
               color: Colors.transparent,
             )),
       );
+      window = View.of(context);
     }
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
-    Size logicalSize = targetSize ??
-        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
+    Size logicalSize =
+        targetSize ?? window.physicalSize / window.devicePixelRatio; // Adapted
+    Size imageSize = targetSize ?? window.physicalSize; // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
             .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
-      window: ui.window,
+      view: window,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
@@ -242,17 +246,14 @@ class ScreenshotController {
       ///
       ///retry untill capture is successfull
       ///
-
     } while (isDirty && retryCounter >= 0);
     try {
-
-      /// Dispose All widgets 
+      /// Dispose All widgets
       rootElement.visitChildren((Element element) {
         rootElement.deactivateChild(element);
       });
       buildOwner.finalizeTree();
     } catch (e) {}
-
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
