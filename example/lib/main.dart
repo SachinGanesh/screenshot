@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         textTheme: TextTheme(
-            headline6: TextStyle(
+            titleLarge: TextStyle(
           color: Colors.yellow,
           // fontSize: 50,
         )),
@@ -123,15 +123,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Text(
                           "This is an invisible widget",
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ],
                     ));
                 screenshotController
                     .captureFromWidget(
-                        InheritedTheme.captureAll(
-                            context, Material(child: container)),
-                        delay: Duration(seconds: 1))
+                  InheritedTheme.captureAll(
+                      context, Material(child: container)),
+                  delay: Duration(seconds: 1),
+                  context: context,
+                )
                     .then((capturedImage) {
                   ShowCapturedWidget(context, capturedImage);
                 });
@@ -152,10 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("Captured widget screenshot"),
         ),
-        body: Center(
-            child: capturedImage != null
-                ? Image.memory(capturedImage)
-                : Container()),
+        body: Center(child: Image.memory(capturedImage)),
       ),
     );
   }

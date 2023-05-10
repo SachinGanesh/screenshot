@@ -2,10 +2,10 @@ library screenshot;
 
 // import 'dart:io';
 import 'dart:async';
-import 'dart:typed_data';
 // import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -64,8 +64,8 @@ class ScreenshotController {
   }
 
   Future<ui.Image?> captureAsUiImage(
-      {double? pixelRatio: 1,
-      Duration delay: const Duration(milliseconds: 20)}) {
+      {double? pixelRatio = 1,
+      Duration delay = const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
@@ -98,12 +98,13 @@ class ScreenshotController {
   ///
   Future<Uint8List> captureFromWidget(
     Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
-    BuildContext? context,
+    required BuildContext context,
     Size? targetSize,
   }) async {
-    ui.Image image = await widgetToUiImage(widget,
+    ui.Image image = await widgetToImage(
+        widget: widget,
         delay: delay,
         pixelRatio: pixelRatio,
         context: context,
@@ -115,11 +116,11 @@ class ScreenshotController {
     return byteData!.buffer.asUint8List();
   }
 
-  static Future<ui.Image> widgetToUiImage(
-    Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+  static Future<ui.Image> widgetToImage({
+    required Widget widget,
+    required BuildContext context,
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
-    BuildContext? context,
     Size? targetSize,
   }) async {
     ///
@@ -130,34 +131,32 @@ class ScreenshotController {
 
     Widget child = widget;
 
-    if (context != null) {
-      ///
-      ///Inherit Theme and MediaQuery of app
-      ///
-      ///
-      child = InheritedTheme.captureAll(
-        context,
-        MediaQuery(
-            data: MediaQuery.of(context),
-            child: Material(
-              child: child,
-              color: Colors.transparent,
-            )),
-      );
-    }
+    ///
+    ///Inherit Theme and MediaQuery of app
+    ///
+    ///
+    child = InheritedTheme.captureAll(
+      context,
+      MediaQuery(
+          data: MediaQuery.of(context),
+          child: Material(
+            child: child,
+            color: Colors.transparent,
+          )),
+    );
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-    Size logicalSize = targetSize ??
-        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
+    final ui.FlutterView view = View.of(context);
+    Size logicalSize =
+        targetSize ?? view.physicalSize / view.devicePixelRatio; // Adapted
+    Size imageSize = targetSize ?? view.physicalSize; // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
             .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
-      window: ui.window,
+      view: view,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
@@ -242,17 +241,14 @@ class ScreenshotController {
       ///
       ///retry untill capture is successfull
       ///
-
     } while (isDirty && retryCounter >= 0);
     try {
-
-      /// Dispose All widgets 
+      /// Dispose All widgets
       rootElement.visitChildren((Element element) {
         rootElement.deactivateChild(element);
       });
       buildOwner.finalizeTree();
     } catch (e) {}
-
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
