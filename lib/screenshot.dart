@@ -148,16 +148,17 @@ class ScreenshotController {
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
+    ui.FlutterView flutterView = View.of(context!);
     Size logicalSize = targetSize ??
-        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
+        flutterView.physicalSize / flutterView.devicePixelRatio; // Adapted
+    Size imageSize = targetSize ?? flutterView.physicalSize; // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
             .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
-      window: ui.window,
+      view: flutterView,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
