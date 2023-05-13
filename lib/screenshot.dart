@@ -249,9 +249,9 @@ class ScreenshotController {
     } while (isDirty && retryCounter >= 0);
     try {
       /// Dispose All widgets
-      rootElement.visitChildren((Element element) {
-        rootElement.deactivateChild(element);
-      });
+      // rootElement.visitChildren((Element element) {
+      //   rootElement.deactivateChild(element);
+      // });
       buildOwner.finalizeTree();
     } catch (e) {}
 
