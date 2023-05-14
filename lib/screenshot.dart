@@ -257,6 +257,77 @@ class ScreenshotController {
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
+
+  ///
+  /// Value for [delay] should increase with widget tree size. Prefered value is 1 seconds
+  ///
+  ///[context] parameter is used to Inherit App Theme and MediaQuery data.
+  ///
+  ///
+  ///
+  Future<Uint8List> captureFromLongWidget(
+    Widget widget, {
+    Duration delay = const Duration(seconds: 1),
+    double? pixelRatio,
+    BuildContext? context,
+    BoxConstraints? constraints,
+  }) async {
+    ui.Image image = await longWidgetToUiImage(
+      widget,
+      delay: delay,
+      pixelRatio: pixelRatio,
+      context: context,
+      constraints: constraints ?? BoxConstraints(),
+    );
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
+    image.dispose();
+
+    return byteData!.buffer.asUint8List();
+  }
+
+  Future<ui.Image> longWidgetToUiImage(Widget widget,
+      {Duration delay = const Duration(seconds: 1),
+      double? pixelRatio,
+      BuildContext? context,
+      BoxConstraints constraints = const BoxConstraints(
+        maxHeight: double.maxFinite,
+      )}) async {
+    final PipelineOwner pipelineOwner = PipelineOwner();
+    final _MeasurementView rootView =
+        pipelineOwner.rootNode = _MeasurementView(constraints);
+    final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+    final RenderObjectToWidgetElement<RenderBox> element =
+        RenderObjectToWidgetAdapter<RenderBox>(
+      container: rootView,
+      debugShortDescription: 'root_render_element_for_size_measurement',
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: widget,
+      ),
+    ).attachToRenderTree(buildOwner);
+    try {
+      rootView.scheduleInitialLayout();
+      pipelineOwner.flushLayout();
+
+      ///
+      /// Calculate Size, and capture widget.
+      ///
+
+      return widgetToUiImage(
+        widget,
+        targetSize: rootView.size,
+        context: context,
+        delay: delay,
+        pixelRatio: pixelRatio,
+      );
+    } finally {
+      // Clean up.
+      element
+          .update(RenderObjectToWidgetAdapter<RenderBox>(container: rootView));
+      buildOwner.finalizeTree();
+    }
+  }
 }
 
 class Screenshot<T> extends StatefulWidget {
@@ -295,4 +366,23 @@ class ScreenshotState extends State<Screenshot> with TickerProviderStateMixin {
 
 extension Ex on double {
   double toPrecision(int n) => double.parse(toStringAsFixed(n));
+}
+
+///
+/// RenderBox widget to calculate size.
+///
+class _MeasurementView extends RenderBox
+    with RenderObjectWithChildMixin<RenderBox> {
+  final BoxConstraints boxConstraints;
+  _MeasurementView(this.boxConstraints);
+
+  @override
+  void performLayout() {
+    assert(child != null);
+    child!.layout(boxConstraints, parentUsesSize: true);
+    size = child!.size;
+  }
+
+  @override
+  void debugAssertDoesMeetConstraints() => true;
 }
