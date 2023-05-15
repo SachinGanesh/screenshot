@@ -259,9 +259,21 @@ class ScreenshotController {
   }
 
   ///
-  /// Value for [delay] should increase with widget tree size. Prefered value is 1 seconds
+  /// ### This function will calculate the size of your widget and then captures it.
   ///
-  ///[context] parameter is used to Inherit App Theme and MediaQuery data.
+  /// ## Notes on Usage:
+  ///     1. Do not use any scrolling widgets like ListView,GridView. Convert those widgets to use Columns and Rows.
+  ///     2. Do not Widgets like `Flexible`,`Expanded`, or `Spacer`. If you do Please consider passing constraints.
+  /// 
+  /// Params:
+  ///
+  /// [widget] : The Widget which needs to be captured.
+  ///
+  /// [delay] : Value for [delay] should increase with widget tree size. Preferred value is 1 seconds
+  ///
+  /// [context] : parameter is used to Inherit App Theme and MediaQuery data.
+  ///
+  /// [constraints] : Constraints for your image. Pass this parameter if your widget contains `Scaffold`,`Expanded`,`Flexible`,`Spacer` or any other widget which needs constraint of parent.
   ///
   ///
   ///

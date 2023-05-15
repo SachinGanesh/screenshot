@@ -169,7 +169,7 @@ Example app uses the same to save screenshots to gallery.
 
 ---
 
-##Sharing Captured Images 
+## Sharing Captured Images 
 
 ```dart
 await _screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List image) async {
