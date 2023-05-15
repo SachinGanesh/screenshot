@@ -342,7 +342,7 @@ class ScreenshotController {
   }
 }
 
-class Screenshot<T> extends StatefulWidget {
+class Screenshot extends StatefulWidget {
   final Widget? child;
   final ScreenshotController controller;
 
