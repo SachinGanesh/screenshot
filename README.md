@@ -72,7 +72,74 @@ screenshotController
       .then((capturedImage) {
     // Handle captured image
   });
-},
+
+```
+
+---
+
+## Capturing a List Widget
+
+You can capture a long Invisible widgets by using `captureFromLongWidget` function.
+
+
+
+```dart
+var randomItemCount = Random().nextInt(100);
+
+///
+/// Step 1: Create Long widget using Column.
+///
+
+var myLongWidget = Builder(builder: (context) {
+  return Container(
+      padding: const EdgeInsets.all(30.0),
+      decoration: BoxDecoration(
+        border:
+            Border.all(color: Colors.blueAccent, width: 5.0),
+        color: Colors.redAccent,
+      ),
+      ///
+      /// Note: Do not use Scrolling widget, instead place your children in Column. 
+      ///  
+      /// Do not use widgets like 'Expanded','Flexible',or 'Spacer'
+      ///
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int i = 0; i < randomItemCount; i++)
+            Text("Tile Index $i"),
+        ],
+      ));
+});
+
+///
+/// Step 2: 
+///    Use `captureFromLongWidget` function for taking screenshot.
+///
+screenshotController
+      .captureFromLongWidget(
+          InheritedTheme.captureAll(
+            context, 
+            Material(
+              child: myLongWidget,
+            ),
+          ),
+          delay: Duration(milliseconds: 100),
+          context: context,
+
+
+          ///
+          /// Additionally you can define constraint for your image.
+          ///
+          /// constraints: BoxConstraints(
+          ///   maxHeight: 1000,
+          ///   maxWidth: 1000,
+          /// )
+      )
+      .then((capturedImage) {
+    // Handle captured image
+  });
+
 ```
 
 
@@ -102,7 +169,7 @@ Example app uses the same to save screenshots to gallery.
 
 ---
 
-##Sharing Captured Images 
+## Sharing Captured Images 
 
 ```dart
 await _screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List image) async {

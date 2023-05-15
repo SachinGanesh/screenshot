@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -5,7 +6,10 @@ import 'package:screenshot/screenshot.dart';
 // import 'package:webview_flutter/webview_flutter.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -132,6 +136,42 @@ class _MyHomePageState extends State<MyHomePage> {
                         InheritedTheme.captureAll(
                             context, Material(child: container)),
                         delay: Duration(seconds: 1))
+                    .then((capturedImage) {
+                  ShowCapturedWidget(context, capturedImage);
+                });
+              },
+            ),
+            ElevatedButton(
+              child: Text(
+                'Capture A dynamic Sized Widget',
+              ),
+              onPressed: () {
+                var randomItemCount = Random().nextInt(100);
+                var container = Builder(builder: (context) {
+                  return Container(
+                      // width: size2.width,
+                      padding: const EdgeInsets.all(30.0),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.blueAccent, width: 5.0),
+                        color: Colors.redAccent,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < randomItemCount; i++)
+                            Text("Tile Index $i"),
+                        ],
+                      ));
+                });
+                screenshotController
+                    .captureFromLongWidget(
+                  InheritedTheme.captureAll(
+                      context, Material(child: container)),
+                  delay: Duration(milliseconds: 100),
+                  context: context,
+                )
                     .then((capturedImage) {
                   ShowCapturedWidget(context, capturedImage);
                 });
