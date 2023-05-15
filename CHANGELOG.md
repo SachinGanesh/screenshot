@@ -1,4 +1,8 @@
+## [2.1.0] - 13/05/2023
+* New Functions: `captureFromLongWidget` and `longWidgetToUiImage`. Calculates widgets size and captures whole widget at once.
+* BREAKING CHANGE: add minimum flutter version constraint. so if your project is below flutter 3.10, Please consider using version 1.3.0
 ## [2.0.0] - 13/05/2023
+* BREAKING CHANGE: supports flutter version >=3.10 only. 
 * Migrate to `FlutterView` from `ui.window` @Mayb3Nots
 ## [1.3.0] - 27/12/2022
 * Fix disposing widgets after capturing in widgetToUiImage function @Lan-tb 
