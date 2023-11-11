@@ -99,12 +99,16 @@ class ScreenshotController {
   Future<Uint8List> captureFromWidget(
     Widget widget, {
     Duration delay = const Duration(seconds: 1),
+    double? customHeight,
+    double? customWidth,
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
   }) async {
     ui.Image image = await widgetToUiImage(widget,
         delay: delay,
+        customHeight: customHeight,
+        customWidth: customWidth,
         pixelRatio: pixelRatio,
         context: context,
         targetSize: targetSize);
@@ -118,6 +122,8 @@ class ScreenshotController {
   /// If you are building a desktop/web application that supports multiple view. Consider passing the [context] so that flutter know which view to capture.
   static Future<ui.Image> widgetToUiImage(
     Widget widget, {
+    double? customHeight,
+    double? customWidth,
     Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
@@ -152,9 +158,13 @@ class ScreenshotController {
     final fallBackView = platformDispatcher.views.first;
     final view =
         context == null ? fallBackView : View.maybeOf(context) ?? fallBackView;
-    Size logicalSize =
-        targetSize ?? view.physicalSize / view.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? view.physicalSize; // Adapted
+
+    Size logicalSize = (customHeight == null || customWidth == null?
+        targetSize ?? view.physicalSize / view.devicePixelRatio : Size(customWidth, customHeight * 2)) /
+        ui.window.devicePixelRatio; // Adapted
+    Size imageSize = (customHeight == null || customWidth == null)?
+      targetSize ?? view.physicalSize :
+      Size(customWidth, customHeight * 2); // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
