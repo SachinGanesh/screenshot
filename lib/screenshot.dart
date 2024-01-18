@@ -155,11 +155,6 @@ class ScreenshotController {
     Size logicalSize =
         targetSize ?? view.physicalSize / view.devicePixelRatio; // Adapted
     Size imageSize = targetSize ?? view.physicalSize; // Adapted
-    final viewConfig = ViewConfiguration(
-      physicalConstraints: BoxConstraints.tight(imageSize),
-      logicalConstraints: BoxConstraints.tight(logicalSize),
-      devicePixelRatio: pixelRatio ?? 1.0,
-    );
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
@@ -169,7 +164,11 @@ class ScreenshotController {
       view: view,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
-      configuration: viewConfig,
+      configuration: ViewConfiguration(
+                        physicalConstraints: BoxConstraints.tight(imageSize),
+                        logicalConstraints: BoxConstraints.tight(logicalSize),
+                        devicePixelRatio: pixelRatio ?? 1.0,
+                      ),
     );
 
     final PipelineOwner pipelineOwner = PipelineOwner();
