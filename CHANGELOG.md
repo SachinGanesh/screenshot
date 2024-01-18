@@ -1,5 +1,5 @@
 ## [2.1.1] - 06/12/2023
-* Fixed widgetToUiImage() to use ViewConstraints object in ViewConfiguration() constructor call instead of Size (required due to flutter api change)
+* Fixed widgetToUiImage() to use new ViewConfiguration() constructor parameters of BoxConstraints instead of Size (required due to flutter api change)
 ## [2.1.0] - 13/05/2023
 * New Functions: `captureFromLongWidget` and `longWidgetToUiImage`. Calculates widgets size and captures whole widget at once.
 * BREAKING CHANGE: add minimum flutter version constraint. so if your project is below flutter 3.10, Please consider using version 1.3.0
