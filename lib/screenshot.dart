@@ -161,12 +161,13 @@ class ScreenshotController {
             .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
+      // View is an instance of FlutterView.
       view: view,
+
+      // Child is your custom widget tree.
       child: RenderPositionedBox(
-          alignment: Alignment.center, child: repaintBoundary),
-      configuration: ViewConfiguration(
-        size: logicalSize,
-        devicePixelRatio: pixelRatio ?? 1.0,
+        alignment: Alignment.center,
+        child: repaintBoundary,
       ),
     );
 
