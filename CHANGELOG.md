@@ -1,3 +1,7 @@
+## [2.2.0] - 15/03/2024
+* Update ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API Changes.
+* BREAKING CHANGE:  This will throw Compile time error for versions <=3.18 and >=3.19.
+
 ## [2.1.0] - 13/05/2023
 * New Functions: `captureFromLongWidget` and `longWidgetToUiImage`. Calculates widgets size and captures whole widget at once.
 * BREAKING CHANGE: add minimum flutter version constraint. so if your project is below flutter 3.10, Please consider using version 1.3.0

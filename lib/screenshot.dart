@@ -165,7 +165,11 @@ class ScreenshotController {
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
-        size: logicalSize,
+        // size: logicalSize,
+        constraints: ui.ViewConstraints(
+          maxHeight: logicalSize.height,
+          maxWidth: logicalSize.width,
+        ),
         devicePixelRatio: pixelRatio ?? 1.0,
       ),
     );
@@ -264,7 +268,7 @@ class ScreenshotController {
   /// ## Notes on Usage:
   ///     1. Do not use any scrolling widgets like ListView,GridView. Convert those widgets to use Columns and Rows.
   ///     2. Do not Widgets like `Flexible`,`Expanded`, or `Spacer`. If you do Please consider passing constraints.
-  /// 
+  ///
   /// Params:
   ///
   /// [widget] : The Widget which needs to be captured.
