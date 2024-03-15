@@ -45,21 +45,17 @@ class ScreenshotController {
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
-      try {
-        ui.Image? image = await captureAsUiImage(
-          delay: Duration.zero,
-          pixelRatio: pixelRatio,
-        );
-        ByteData? byteData =
-            await image?.toByteData(format: ui.ImageByteFormat.png);
-        image?.dispose();
+      ui.Image? image = await captureAsUiImage(
+        delay: Duration.zero,
+        pixelRatio: pixelRatio,
+      );
+      ByteData? byteData =
+          await image?.toByteData(format: ui.ImageByteFormat.png);
+      image?.dispose();
 
-        Uint8List? pngBytes = byteData?.buffer.asUint8List();
+      Uint8List? pngBytes = byteData?.buffer.asUint8List();
 
-        return pngBytes;
-      } catch (Exception) {
-        throw (Exception);
-      }
+      return pngBytes;
     });
   }
 
@@ -83,8 +79,8 @@ class ScreenshotController {
         }
         ui.Image image = await boundary.toImage(pixelRatio: pixelRatio ?? 1);
         return image;
-      } catch (Exception) {
-        throw (Exception);
+      } catch (e) {
+        throw e;
       }
     });
   }
@@ -165,11 +161,7 @@ class ScreenshotController {
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
-        // size: logicalSize,
-        constraints: ui.ViewConstraints(
-          maxHeight: logicalSize.height,
-          maxWidth: logicalSize.width,
-        ),
+        size: logicalSize,
         devicePixelRatio: pixelRatio ?? 1.0,
       ),
     );

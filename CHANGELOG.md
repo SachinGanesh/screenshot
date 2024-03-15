@@ -1,5 +1,9 @@
+## [2.3.0] - 15/03/2024
+* Revert ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API with size parameter .
+* BREAKING CHANGE:  This will throw Compile time error for versions >=3.18 and <=3.19 and for some Pre release versions.
+
 ## [2.2.0] - 15/03/2024
-* Update ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API Changes.
+* Update ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API with constraint parameter.
 * BREAKING CHANGE:  This will throw Compile time error for versions <=3.18 and >=3.19.
 
 ## [2.1.0] - 13/05/2023
