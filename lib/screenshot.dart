@@ -44,7 +44,7 @@ class ScreenshotController {
     Duration delay = const Duration(milliseconds: 20),
   }) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
-    return new Future.delayed(delay, () async {
+    return Future.delayed(delay, () async {
       ui.Image? image = await captureAsUiImage(
         delay: Duration.zero,
         pixelRatio: pixelRatio,
@@ -63,7 +63,7 @@ class ScreenshotController {
       {double? pixelRatio = 1,
       Duration delay = const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
-    return new Future.delayed(delay, () async {
+    return Future.delayed(delay, () async {
       try {
         var findRenderObject =
             this._containerKey.currentContext?.findRenderObject();
@@ -73,14 +73,12 @@ class ScreenshotController {
         RenderRepaintBoundary boundary =
             findRenderObject as RenderRepaintBoundary;
         BuildContext? context = _containerKey.currentContext;
-        if (pixelRatio == null) {
-          if (context != null)
-            pixelRatio = pixelRatio ?? MediaQuery.of(context).devicePixelRatio;
-        }
-        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio ?? 1);
+        pixelRatio = pixelRatio ??
+            ((context != null) ? MediaQuery.of(context).devicePixelRatio : 1);
+        ui.Image image = await boundary.toImage(pixelRatio: pixelRatio!);
         return image;
-      } catch (e) {
-        throw e;
+      } catch (_) {
+        rethrow;
       }
     });
   }
@@ -249,7 +247,9 @@ class ScreenshotController {
       //   rootElement.deactivateChild(element);
       // });
       buildOwner.finalizeTree();
-    } catch (e) {}
+    } catch (_) {
+      rethrow;
+    }
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
@@ -350,7 +350,7 @@ class Screenshot extends StatefulWidget {
 
   @override
   State<Screenshot> createState() {
-    return new ScreenshotState();
+    return ScreenshotState();
   }
 }
 
