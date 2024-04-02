@@ -157,9 +157,13 @@ class ScreenshotController {
     final RenderView renderView = RenderView(
       view: view,
       child: RenderPositionedBox(
-          alignment: Alignment.center, child: repaintBoundary),
+        alignment: Alignment.center,
+        child: repaintBoundary,
+      ),
       configuration: ViewConfiguration(
-        size: logicalSize,
+        physicalConstraints:
+            BoxConstraints.tight(logicalSize) * (pixelRatio ?? 1),
+        logicalConstraints: BoxConstraints.tight(logicalSize),
         devicePixelRatio: pixelRatio ?? 1.0,
       ),
     );
