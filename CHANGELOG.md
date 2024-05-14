@@ -1,3 +1,7 @@
+## [2.5.0] - 14/05/2024
+* Revert Changes from 2.4.0 release.
+* BREAKING CHANGE: Add flutter version constraint to be <3.22.0
+
 ## [2.4.0] - 14/05/2024
 * Update  `ViewConfiguration` parameters.
 * BREAKING CHANGE:  This will throw Compile time error for versions <=3.19.
