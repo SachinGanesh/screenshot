@@ -1,3 +1,7 @@
+## [3.0.0] - 14/05/2024
+* Make API Changes compatible with Flutter 3.22.0
+* BREAKING CHANGE: Add flutter version constraint to be >=3.22.0. This will break for lower versions of Flutter.
+
 ## [2.5.0] - 14/05/2024
 * Revert Changes from 2.4.0 release.
 * BREAKING CHANGE: Add flutter version constraint to be <3.22.0
