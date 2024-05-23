@@ -154,11 +154,11 @@ For this you can use `captureAndSave` method by passing directory location. By d
 
 ```dart
 final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-String fileName = DateTime.now().microsecondsSinceEpoch;
+String fileName = DateTime.now().microsecondsSinceEpoch as String;
 path = '$directory';
 
 screenshotController.captureAndSave(
-    path //set path where screenshot will be saved
+    path, //set path where screenshot will be saved
     fileName:fileName 
 );
 ```
