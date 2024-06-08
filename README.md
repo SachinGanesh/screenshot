@@ -2,7 +2,8 @@
 
 A simple package to capture widgets as Images. Now you can also capture the widgets that are not rendered on the screen!
 
-This package wraps your widgets inside [RenderRepaintBoundary](https://docs.flutter.io/flutter/rendering/RenderRepaintBoundary-class.html)
+This package wraps your widgets inside [RenderRepaintBoundary](https://api.flutter.dev/flutter/rendering/RenderRepaintBoundary-class.html)
+
 
 [Source](https://stackoverflow.com/a/51118088)
 
